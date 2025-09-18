@@ -3,14 +3,18 @@
   "version": "1.0.0",
   "platform": "all",
   "arch": "all",
-  "name": "eagle-plugin-vite-react-ts",
-  "description": "Vite React TypeScript TailwindCss template for Eagle Plugin.",
+  "name": "zipper",
+  "description": "Eagle file compression and decompression tool.",
   "logo": "/dist/vite.svg",
-  "keywords": ["template"],
-  "devTools": false,
-  "main": {
-    "url": "dist/index.html",
-    "width": 768,
-    "height": 450
+  "keywords": ["rar", "zip", "7z", "archive", "compress", "decompress"],
+  "devTools": true,
+  "fallbackLanguage": "en",
+	"languages": ["en", "zh_TW", "zh_CN", "ja_JP", "es_ES", "ru_RU", "de_DE", "ko_KR"],
+  "preview": {
+    "zip,rar,tar,7z": {
+      "viewer": {
+        "path": "dist/index.html"
+      }
+    }
   }
 }
