@@ -6,14 +6,28 @@ interface FileTableProps {
   currentPath: string;
   onNavigateToFolder: (folderPath: string) => void;
   onNavigateUp: () => void;
+  onFileDoubleClick?: (entry: ArchiveEntry) => void;
 }
 
 export const FileTable: React.FC<FileTableProps> = ({ 
   entries, 
   currentPath, 
   onNavigateToFolder, 
-  onNavigateUp 
+  onNavigateUp,
+  onFileDoubleClick
 }) => {
+  const handleRowClick = (entry: ArchiveEntry) => {
+    if (entry.isDirectory) {
+      onNavigateToFolder(entry.path);
+    }
+  };
+
+  const handleRowDoubleClick = (entry: ArchiveEntry) => {
+    if (!entry.isDirectory && onFileDoubleClick) {
+      onFileDoubleClick(entry);
+    }
+  };
+
   return (
     <div className="flex-1 overflow-auto">
       <div className="overflow-x-auto">
@@ -45,7 +59,8 @@ export const FileTable: React.FC<FileTableProps> = ({
               <tr
                 key={index}
                 className="hover:bg-base-200 cursor-pointer"
-                onClick={() => entry.isDirectory && onNavigateToFolder(entry.path)}
+                onClick={() => handleRowClick(entry)}
+                onDoubleClick={() => handleRowDoubleClick(entry)}
               >
                 <td>
                   <div className="flex items-center gap-2">

@@ -10,9 +10,11 @@
     "preview": "vite preview"
   },
   "dependencies": {
+    "@types/crypto-js": "^4.2.2",
     "7zip-bin": "^5.2.0",
     "7zip-min": "^2.1.0",
     "adm-zip": "^0.5.16",
+    "crypto-js": "^4.2.0",
     "daisyui": "^3.6.4",
     "node-7z": "^3.0.0",
     "node-unrar-js": "^2.0.2",

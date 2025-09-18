@@ -11,7 +11,7 @@
   "fallbackLanguage": "en",
 	"languages": ["en", "zh_TW", "zh_CN", "ja_JP", "es_ES", "ru_RU", "de_DE", "ko_KR"],
   "preview": {
-    "zip,rar,tar,7z": {
+    "zip,rar,7z": {
       "viewer": {
         "path": "dist/index.html"
       }

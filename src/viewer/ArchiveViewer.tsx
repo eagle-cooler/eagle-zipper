@@ -3,6 +3,7 @@ import type { ArchiveEntry } from './types';
 import { getArchiveType } from './utils';
 import { loadZipArchive, loadRarArchive, load7zArchive } from './archiveLoaders';
 import { getDisplayEntries } from './entryFilters';
+import { extractAndOpenFile } from './fileExtractor';
 import { PasswordPrompt } from './PasswordPrompt';
 import { Header } from './Header';
 import { Breadcrumb } from './Breadcrumb';
@@ -17,6 +18,7 @@ export const ArchiveViewer: React.FC = () => {
   const [error, setError] = useState<string | null>(null);
   const [showPasswordPrompt, setShowPasswordPrompt] = useState(false);
   const [archiveType, setArchiveType] = useState<'zip' | 'rar' | '7z' | null>(null);
+  const [currentPassword, setCurrentPassword] = useState<string | undefined>(undefined);
 
   useEffect(() => {
     const urlParams = new URLSearchParams(window.location.search);
@@ -67,6 +69,7 @@ export const ArchiveViewer: React.FC = () => {
 
   const handlePasswordSubmit = (password: string) => {
     setShowPasswordPrompt(false);
+    setCurrentPassword(password);
     if (filePath) {
       loadArchive(filePath, password);
     }
@@ -75,6 +78,24 @@ export const ArchiveViewer: React.FC = () => {
   const handlePasswordCancel = () => {
     setShowPasswordPrompt(false);
     setError('Archive access cancelled');
+  };
+
+  const handleFileDoubleClick = async (entry: ArchiveEntry) => {
+    if (!filePath || !archiveType) return;
+
+    try {
+      setLoading(true);
+      await extractAndOpenFile(filePath, entry, archiveType, currentPassword);
+    } catch (err) {
+      console.error('Error extracting file:', err);
+      if (err instanceof Error) {
+        setError(`Failed to extract file: ${err.message}`);
+      } else {
+        setError('Failed to extract file');
+      }
+    } finally {
+      setLoading(false);
+    }
   };
 
   const navigateToFolder = (folderPath: string) => {
@@ -132,6 +153,7 @@ export const ArchiveViewer: React.FC = () => {
         currentPath={currentPath}
         onNavigateToFolder={navigateToFolder}
         onNavigateUp={navigateUp}
+        onFileDoubleClick={handleFileDoubleClick}
       />
 
       <Footer itemCount={displayEntries.length} currentPath={currentPath} />
