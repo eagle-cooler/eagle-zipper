@@ -90,13 +90,27 @@ src/
 - Memory management for file previews
 - Responsive UI during archive parsing
 
-## Required Dependencies (Missing)
-- Archive parsing libraries (JSZip, node-stream-zip, etc.)
-- File type detection utilities
-- Preview rendering components
+## Archive Processing Dependencies
+- **adm-zip**: 0.5.16 - ZIP archive parsing and extraction
+- **node-unrar-js**: 2.0.2 - RAR archive support with TypeScript types
+- **7zip-min**: 1.4.5 - 7Z archive processing
+- **Installation Method**: External modules manually installed in dist/node_modules post-build
+
+## Build Process
+```json
+{
+  "scripts": {
+    "build": "vite build && npm run post-build",
+    "post-build": "copy manifest.json dist\\ && cd dist && npm init -y && npm install node-unrar-js 7zip-min adm-zip --production && cd .. && npm run clean-sourcemaps",
+    "clean-sourcemaps": "node scripts/clean-sourcemaps.js"
+  }
+}
+```
 
 ## Build Output
-- **Target**: `dist/` directory
+- **Target**: `dist/` directory with embedded node_modules
 - **Entry Point**: `dist/index.html`
+- **Modules**: External dependencies installed locally in dist folder
+- **Source Maps**: Cleaned to prevent Eagle compatibility issues
 - **Assets**: Bundled CSS and JS files
 - **Deployment**: Direct integration with Eagle

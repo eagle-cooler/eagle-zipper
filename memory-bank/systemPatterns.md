@@ -17,12 +17,34 @@ Eagle Extension Framework
 - **Purpose**: Main application container and extension initialization
 
 ### 2. Archive Viewer
-- **Location**: `src/viewer/` (currently empty)
-- **Planned Structure**:
-  - Archive browser component
-  - File list renderer
-  - Preview pane
-  - Extraction utilities
+- **Location**: `src/viewer/` (fully implemented with organized structure)
+- **Actual Structure**:
+  ```
+  src/viewer/
+  ├── components/          # React UI components
+  │   ├── ArchiveViewer.tsx
+  │   ├── FileTable.tsx
+  │   ├── Header.tsx
+  │   ├── Footer.tsx
+  │   ├── Breadcrumb.tsx
+  │   └── PasswordPrompt.tsx
+  ├── loaders/             # Format-specific archive parsing
+  │   ├── zipLoader.ts
+  │   ├── rarLoader.ts
+  │   └── sevenZipLoader.ts
+  ├── extractors/          # Format-specific file extraction
+  │   ├── zipExtractor.ts
+  │   ├── rarExtractor.ts
+  │   ├── sevenZipExtractor.ts
+  │   └── mainExtractor.ts
+  ├── utils/               # Utility functions
+  │   ├── archiveUtils.ts
+  │   ├── entryFilters.ts
+  │   └── extractionUtils.ts
+  ├── types/               # TypeScript definitions
+  │   └── index.ts
+  └── index.ts             # Barrel exports
+  ```
 
 ### 3. Eagle Integration
 - **API Surface**: Comprehensive Eagle API definitions in `eagle.d.ts`
