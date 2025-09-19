@@ -1,0 +1,74 @@
+{
+  "name": "node-unrar-js",
+  "version": "2.0.2",
+  "description": "Pure JavaScript RAR archive extractor by compile the official unrar lib by Emscripten.",
+  "homepage": "https://github.com/YuJianrong/node-unrar.js",
+  "bugs": {
+    "url": "https://github.com/YuJianrong/node-unrar.js/issues"
+  },
+  "repository": "YuJianrong/node-unrar.js",
+  "main": "./dist/index.js",
+  "module": "./esm/index.esm.js",
+  "scripts": {
+    "prepare": "husky install",
+    "downloadUnrarSrc": "wget https://www.rarlab.com/rar/unrarsrc-6.1.7.tar.gz && tar -xf unrarsrc-6.1.7.tar.gz -C src/cpp && rm -rf unrarsrc-6.1.7.tar.gz && husky install",
+    "clean": "rm -rf dist coverage dist_map esm",
+    "clean:test": "rm -rf dist/test dist/build esm/test esm/build dist/**/*.map esm/**/*.map",
+    "commit": "cz",
+    "lint": "eslint './src/**/*.ts' --max-warnings 0",
+    "tsc": "tsc",
+    "build:debug": "tsc && node ./dist/build/make.js",
+    "prebuild:release": "npm run lint",
+    "build:release": "npm run clean && tsc && node ./dist/build/make.js release && tsc -p tsconfig-esm.json && node ./dist/build/make.js release esm",
+    "test": "mocha dist/test/*.spec.js",
+    "test:debug": "npm run test -- --inspect-brk"
+  },
+  "keywords": [
+    "unrar"
+  ],
+  "author": "Jianrong Yu <yujianrong@gmail.com>",
+  "license": "MIT",
+  "devDependencies": {
+    "@commitlint/cli": "^18.4.3",
+    "@commitlint/config-conventional": "^18.4.3",
+    "@semantic-release/changelog": "^6.0.3",
+    "@semantic-release/git": "^10.0.1",
+    "@types/eslint": "^8.44.7",
+    "@types/mocha": "^10.0.5",
+    "@types/shelljs": "^0.8.15",
+    "@typescript-eslint/eslint-plugin": "^6.12.0",
+    "@typescript-eslint/parser": "^6.12.0",
+    "commitizen": "^4.3.0",
+    "cz-conventional-changelog": "^3.3.0",
+    "eslint": "^8.54.0",
+    "eslint-config-prettier": "^9.0.0",
+    "eslint-plugin-prettier": "^5.0.1",
+    "husky": "^8.0.3",
+    "lint-staged": "^15.1.0",
+    "mocha": "^10.2.0",
+    "prettier": "^3.1.0",
+    "shelljs": "^0.8.5",
+    "typescript": "^5.3.2"
+  },
+  "engines": {
+    "node": ">=10.0.0"
+  },
+  "lint-staged": {
+    "*.{json,md,less,yaml,yml}": [
+      "prettier --write"
+    ],
+    "*.{ts,tsx}": [
+      "eslint --fix --max-warnings 0"
+    ]
+  },
+  "config": {
+    "commitizen": {
+      "path": "./node_modules/cz-conventional-changelog"
+    }
+  },
+  "files": [
+    "dist",
+    "esm",
+    "*.md"
+  ]
+}
