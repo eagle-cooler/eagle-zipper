@@ -1,0 +1,20 @@
+{
+  "id": "870e7d2e-a37a-4f67-997a-0b43f849217e",
+  "version": "1.0.0",
+  "platform": "all",
+  "arch": "all",
+  "name": "zipper",
+  "description": "Eagle file compression and decompression tool.",
+  "logo": "/dist/vite.svg",
+  "keywords": ["rar", "zip", "7z", "archive", "compress", "decompress"],
+  "devTools": true,
+  "fallbackLanguage": "en",
+	"languages": ["en", "zh_TW", "zh_CN", "ja_JP", "es_ES", "ru_RU", "de_DE", "ko_KR"],
+  "preview": {
+    "zip,rar,7z": {
+      "viewer": {
+        "path": "dist/index.html"
+      }
+    }
+  }
+}

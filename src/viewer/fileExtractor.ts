@@ -21,11 +21,47 @@ export const createExtractionPath = (archivePath: string, entryPath: string): {
   const entryHash = generateSHA256(entryPath);
   const fileExt = getFileExtension(entryPath);
   
-  const folderPath = `${tmpDir}/${archiveHash}`;
+  const folderPath = `${tmpDir}/zipper.e/${archiveHash}`;
   const fileName = `${entryHash}${fileExt}`;
   const filePath = `${folderPath}/${fileName}`;
   
   return { folderPath, filePath, fileName };
+};
+
+export const shouldSkipExtraction = (
+  extractedFilePath: string, 
+  archivePath: string, 
+  entry: ArchiveEntry
+): boolean => {
+  try {
+    const fs = require('fs');
+    
+    // Check if extracted file exists
+    if (!fs.existsSync(extractedFilePath)) {
+      return false;
+    }
+    
+    // Get archive stats
+    const archiveStats = fs.statSync(archivePath);
+    
+    // Get extracted file stats
+    const extractedStats = fs.statSync(extractedFilePath);
+    
+    // Compare file size and modification time
+    // We use archive modification time as a proxy for entry modification time
+    const sameSize = extractedStats.size === entry.size;
+    const sameModTime = Math.abs(extractedStats.mtime.getTime() - archiveStats.mtime.getTime()) < 1000; // 1 second tolerance
+    
+    if (sameSize && sameModTime) {
+      console.log(`Skipping extraction - file exists and unchanged: ${extractedFilePath}`);
+      return true;
+    }
+    
+    return false;
+  } catch (err) {
+    console.warn('Error checking file existence, proceeding with extraction:', err);
+    return false;
+  }
 };
 
 export const extractZipFile = async (
@@ -36,9 +72,16 @@ export const extractZipFile = async (
   try {
     console.log('Extracting ZIP file:', entry.path);
     
+    // Create extraction paths
+    const { folderPath, filePath } = createExtractionPath(archivePath, entry.path);
+    
+    // Check if file already exists and is up to date
+    if (shouldSkipExtraction(filePath, archivePath, entry)) {
+      return filePath;
+    }
+    
     const AdmZip = require('adm-zip');
     const fs = require('fs');
-    const path = require('path');
     
     // Read the archive
     const fileBuffer = fs.readFileSync(archivePath);
@@ -55,9 +98,6 @@ export const extractZipFile = async (
     if (!fileData) {
       throw new Error(`Could not read file data for: ${entry.path}`);
     }
-    
-    // Create extraction paths
-    const { folderPath, filePath } = createExtractionPath(archivePath, entry.path);
     
     // Ensure the folder exists
     if (!fs.existsSync(folderPath)) {
@@ -83,12 +123,17 @@ export const extract7zFile = async (
   try {
     console.log('Extracting 7Z file:', entry.path);
     
+    // Create extraction paths
+    const { folderPath, filePath } = createExtractionPath(archivePath, entry.path);
+    
+    // Check if file already exists and is up to date
+    if (shouldSkipExtraction(filePath, archivePath, entry)) {
+      return filePath;
+    }
+    
     const _7z = require('7zip-min');
     const fs = require('fs');
     const path = require('path');
-    
-    // Create extraction paths
-    const { folderPath, filePath } = createExtractionPath(archivePath, entry.path);
     
     // Ensure the folder exists
     if (!fs.existsSync(folderPath)) {
@@ -147,29 +192,49 @@ export const extractRarFile = async (
   try {
     console.log('Extracting RAR file:', entry.path);
     
+    // Create extraction paths
+    const { folderPath, filePath } = createExtractionPath(archivePath, entry.path);
+    
+    // Check if file already exists and is up to date
+    if (shouldSkipExtraction(filePath, archivePath, entry)) {
+      return filePath;
+    }
+    
     const nodeUnrar = require('node-unrar-js');
     const fs = require('fs');
     
-    // Create extractor
-    const extractor = await nodeUnrar.createExtractorFromFile({ 
-      filepath: archivePath, 
+    // Read the RAR file as buffer data (like in the documentation)
+    const rarBuffer = fs.readFileSync(archivePath);
+    const buf = Uint8Array.from(rarBuffer).buffer;
+    
+    // Create extractor from data instead of file path
+    const extractor = await nodeUnrar.createExtractorFromData({ 
+      data: buf, 
       password: password 
     });
     
     // Extract specific file
     const extracted = extractor.extract({ files: [entry.path] });
+    console.log('RAR extraction result:', extracted);
+    console.log('Looking for file:', entry.path);
+    console.log('Entry name:', entry.name);
     
-    // Find the extracted file
-    const extractedFile = extracted.files.find((file: any) => 
-      file.fileHeader.name === entry.path
-    );
+    // Convert the files generator to array using spread operator
+    const files = [...extracted.files];
+    console.log('Extracted files:', files);
     
-    if (!extractedFile) {
-      throw new Error(`File not found in RAR archive: ${entry.path}`);
+    // Find the file we want
+    const extractedFile = files.find((file: any) => {
+      const headerName = file.fileHeader?.name;
+      console.log('Checking file header name:', headerName);
+      return headerName === entry.path || headerName === entry.name;
+    });
+    
+    console.log('Found extracted file:', extractedFile);
+    
+    if (!extractedFile || !extractedFile.extraction) {
+      throw new Error(`File not found in RAR archive or no extraction data: ${entry.path}`);
     }
-    
-    // Create extraction paths
-    const { folderPath, filePath } = createExtractionPath(archivePath, entry.path);
     
     // Ensure the folder exists
     if (!fs.existsSync(folderPath)) {

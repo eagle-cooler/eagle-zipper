@@ -1,5 +1,8 @@
-import type { ArchiveEntry } from './types';
-import { formatFileSize } from './utils';
+import type { ArchiveEntry } from '../types';
+import { formatFileSize } from '../utils';
+
+type SortField = 'name' | 'size' | 'compressedSize' | 'date';
+type SortDirection = 'asc' | 'desc';
 
 interface FileTableProps {
   entries: ArchiveEntry[];
@@ -7,6 +10,9 @@ interface FileTableProps {
   onNavigateToFolder: (folderPath: string) => void;
   onNavigateUp: () => void;
   onFileDoubleClick?: (entry: ArchiveEntry) => void;
+  sortField: SortField;
+  sortDirection: SortDirection;
+  onSort: (field: SortField) => void;
 }
 
 export const FileTable: React.FC<FileTableProps> = ({ 
@@ -14,7 +20,10 @@ export const FileTable: React.FC<FileTableProps> = ({
   currentPath, 
   onNavigateToFolder, 
   onNavigateUp,
-  onFileDoubleClick
+  onFileDoubleClick,
+  sortField,
+  sortDirection,
+  onSort
 }) => {
   const handleRowClick = (entry: ArchiveEntry) => {
     if (entry.isDirectory) {
@@ -28,16 +37,35 @@ export const FileTable: React.FC<FileTableProps> = ({
     }
   };
 
+  const getSortIcon = (field: SortField) => {
+    if (sortField !== field) {
+      return <span className="opacity-30">↕️</span>;
+    }
+    return sortDirection === 'asc' ? <span>↑</span> : <span>↓</span>;
+  };
+
+  const SortableHeader: React.FC<{ field: SortField; children: React.ReactNode }> = ({ field, children }) => (
+    <th 
+      className="cursor-pointer hover:bg-base-200 select-none"
+      onClick={() => onSort(field)}
+    >
+      <div className="flex items-center gap-1">
+        {children}
+        {getSortIcon(field)}
+      </div>
+    </th>
+  );
+
   return (
     <div className="flex-1 overflow-auto">
       <div className="overflow-x-auto">
         <table className="table table-zebra w-full">
           <thead>
             <tr>
-              <th>Name</th>
-              <th>Size</th>
-              <th>Compressed</th>
-              <th>Date</th>
+              <SortableHeader field="name">Name</SortableHeader>
+              <SortableHeader field="size">Size</SortableHeader>
+              <SortableHeader field="compressedSize">Compressed</SortableHeader>
+              <SortableHeader field="date">Date</SortableHeader>
             </tr>
           </thead>
           <tbody>
@@ -57,7 +85,7 @@ export const FileTable: React.FC<FileTableProps> = ({
             
             {entries.map((entry, index) => (
               <tr
-                key={index}
+                key={`${entry.path}-${index}`}
                 className="hover:bg-base-200 cursor-pointer"
                 onClick={() => handleRowClick(entry)}
                 onDoubleClick={() => handleRowDoubleClick(entry)}

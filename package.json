@@ -5,7 +5,9 @@
   "type": "module",
   "scripts": {
     "dev": "tsc && vite build --watch",
-    "build": "vite build",
+    "build": "vite build && npm run post-build",
+    "post-build": "copy manifest.json dist\\ && cd dist && npm init -y && npm install node-unrar-js 7zip-min adm-zip --production && cd .. && npm run clean-sourcemaps",
+    "clean-sourcemaps": "node scripts/clean-sourcemaps.js",
     "lint": "eslint . --ext ts,tsx --report-unused-disable-directives --max-warnings 0",
     "preview": "vite preview"
   },

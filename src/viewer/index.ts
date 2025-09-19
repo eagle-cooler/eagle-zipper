@@ -1,1 +1,1 @@
-export { ArchiveViewer } from './ArchiveViewer';
+export { ArchiveViewer } from './components/ArchiveViewer';

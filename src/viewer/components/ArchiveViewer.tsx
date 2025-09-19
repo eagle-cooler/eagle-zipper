@@ -1,14 +1,17 @@
 import { useState, useEffect } from 'react';
-import type { ArchiveEntry } from './types';
-import { getArchiveType } from './utils';
-import { loadZipArchive, loadRarArchive, load7zArchive } from './archiveLoaders';
-import { getDisplayEntries } from './entryFilters';
-import { extractAndOpenFile } from './fileExtractor';
+import type { ArchiveEntry } from '../types';
+import { getArchiveType } from '../utils';
+import { loadZipArchive, loadRarArchive, load7zArchive } from '../loaders';
+import { getDisplayEntries } from '../utils';
+import { extractAndOpenFile } from '../extractors';
 import { PasswordPrompt } from './PasswordPrompt';
 import { Header } from './Header';
 import { Breadcrumb } from './Breadcrumb';
 import { FileTable } from './FileTable';
 import { Footer } from './Footer';
+
+type SortField = 'name' | 'size' | 'compressedSize' | 'date';
+type SortDirection = 'asc' | 'desc';
 
 export const ArchiveViewer: React.FC = () => {
   const [filePath, setFilePath] = useState<string | null>(null);
@@ -19,6 +22,8 @@ export const ArchiveViewer: React.FC = () => {
   const [showPasswordPrompt, setShowPasswordPrompt] = useState(false);
   const [archiveType, setArchiveType] = useState<'zip' | 'rar' | '7z' | null>(null);
   const [currentPassword, setCurrentPassword] = useState<string | undefined>(undefined);
+  const [sortField, setSortField] = useState<SortField>('name');
+  const [sortDirection, setSortDirection] = useState<SortDirection>('asc');
 
   useEffect(() => {
     const urlParams = new URLSearchParams(window.location.search);
@@ -111,6 +116,52 @@ export const ArchiveViewer: React.FC = () => {
     setCurrentPath('');
   };
 
+  const handleSort = (field: SortField) => {
+    if (sortField === field) {
+      // Toggle direction if same field
+      setSortDirection(sortDirection === 'asc' ? 'desc' : 'asc');
+    } else {
+      // New field, default to ascending
+      setSortField(field);
+      setSortDirection('asc');
+    }
+  };
+
+  const sortEntries = (entries: ArchiveEntry[]): ArchiveEntry[] => {
+    const sortedEntries = [...entries].sort((a, b) => {
+      // Always keep directories at the top
+      if (a.isDirectory && !b.isDirectory) return -1;
+      if (!a.isDirectory && b.isDirectory) return 1;
+      
+      let comparison = 0;
+      
+      switch (sortField) {
+        case 'name':
+          comparison = a.name.localeCompare(b.name);
+          break;
+        case 'size':
+          comparison = a.size - b.size;
+          break;
+        case 'compressedSize':
+          const aCompressed = a.compressedSize || 0;
+          const bCompressed = b.compressedSize || 0;
+          comparison = aCompressed - bCompressed;
+          break;
+        case 'date':
+          const aTime = a.date ? a.date.getTime() : 0;
+          const bTime = b.date ? b.date.getTime() : 0;
+          comparison = aTime - bTime;
+          break;
+        default:
+          comparison = 0;
+      }
+      
+      return sortDirection === 'asc' ? comparison : -comparison;
+    });
+    
+    return sortedEntries;
+  };
+
   if (loading) {
     return (
       <div className="flex items-center justify-center h-screen select-none">
@@ -130,7 +181,7 @@ export const ArchiveViewer: React.FC = () => {
     );
   }
 
-  const displayEntries = getDisplayEntries(entries, currentPath);
+  const displayEntries = sortEntries(getDisplayEntries(entries, currentPath));
 
   return (
     <div className="h-screen flex flex-col select-none">
@@ -154,6 +205,9 @@ export const ArchiveViewer: React.FC = () => {
         onNavigateToFolder={navigateToFolder}
         onNavigateUp={navigateUp}
         onFileDoubleClick={handleFileDoubleClick}
+        sortField={sortField}
+        sortDirection={sortDirection}
+        onSort={handleSort}
       />
 
       <Footer itemCount={displayEntries.length} currentPath={currentPath} />

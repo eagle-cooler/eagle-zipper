@@ -1,4 +1,3 @@
-import AdmZip from 'adm-zip';
 import type { ArchiveEntry } from './types';
 
 export const loadZipArchive = async (path: string, password?: string): Promise<ArchiveEntry[]> => {
@@ -7,6 +6,7 @@ export const loadZipArchive = async (path: string, password?: string): Promise<A
     
     // Read the file using Node.js fs with require
     const fs = require('fs');
+    const AdmZip = require('adm-zip');
     const fileBuffer = fs.readFileSync(path);
     console.log('File buffer size:', fileBuffer.length);
     
@@ -22,7 +22,7 @@ export const loadZipArchive = async (path: string, password?: string): Promise<A
     console.log('ZIP entries found:', zipEntries.length);
     
     const archiveEntries: ArchiveEntry[] = zipEntries
-      .filter(entry => {
+      .filter((entry: any) => {
         // Filter out problematic entries
         if (!entry.entryName || entry.entryName.trim() === '') {
           console.log('Skipping entry with empty name:', entry);
@@ -37,7 +37,7 @@ export const loadZipArchive = async (path: string, password?: string): Promise<A
         
         return true;
       })
-      .map(entry => {
+      .map((entry: any) => {
         console.log('Processing entry:', entry.entryName, 'isDirectory:', entry.isDirectory);
         
         // Extract proper name for display
@@ -49,7 +49,7 @@ export const loadZipArchive = async (path: string, password?: string): Promise<A
         
         // Additional safety check for empty names
         if (displayName.trim() === '') {
-          displayName = entry.entryName.split('/').filter(p => p).pop() || 'Unknown';
+          displayName = entry.entryName.split('/').filter((p: string) => p).pop() || 'Unknown';
         }
         
         return {
@@ -172,8 +172,14 @@ export const loadRarArchive = async (path: string, password?: string): Promise<A
     
     // Read RAR archive using node-unrar-js with require
     const nodeUnrar = require('node-unrar-js');
-    const extractor = await nodeUnrar.createExtractorFromFile({ 
-      filepath: path, 
+    const fs = require('fs');
+    
+    // Read the RAR file as buffer data (consistent with extraction)
+    const rarBuffer = fs.readFileSync(path);
+    const buf = Uint8Array.from(rarBuffer).buffer;
+    
+    const extractor = await nodeUnrar.createExtractorFromData({ 
+      data: buf, 
       password: password 
     });
     
@@ -183,24 +189,59 @@ export const loadRarArchive = async (path: string, password?: string): Promise<A
     // Extract file information from the list structure
     const archiveEntries: ArchiveEntry[] = [];
     
-    // The exact structure depends on the version of node-unrar-js
-    // Let's try to handle different possible structures
-    if (list && typeof list === 'object') {
-      // Try to find files array in the response
+    // The fileHeaders is a generator, we need to iterate it
+    if (list && list.fileHeaders) {
+      console.log('Iterating through RAR file headers...');
+      
+      // Convert generator to array using spread operator (correct syntax)
+      const fileHeaders = [...list.fileHeaders];
+      console.log('RAR file headers array:', fileHeaders);
+      
+      for (const fileHeader of fileHeaders) {
+        console.log('Processing RAR file header:', fileHeader);
+        
+        const header = fileHeader as any; // Type cast for RAR file header
+        console.log('RAR header details:', {
+          name: header.name,
+          flags: header.flags,
+          packSize: header.packSize,
+          unpSize: header.unpSize,
+          crc: header.crc,
+          time: header.time,
+          fullHeader: header
+        });
+        
+        const fileName = header.name || '';
+        const isDir = header.flags?.directory || fileName.endsWith('/') || false;
+        
+        archiveEntries.push({
+          name: fileName ? fileName.split('/').pop() || fileName : 'Unknown',
+          path: fileName,
+          size: header.unpSize || 0,  // Use unpSize for uncompressed size
+          compressedSize: header.packSize || 0,  // Use packSize for compressed size
+          isDirectory: isDir,
+          date: header.time ? new Date(header.time) : new Date()
+        });
+      }
+    } else {
+      console.log('No fileHeaders found in RAR list structure');
+      
+      // Try alternative structure
       const filesArray = (list as any).files || (list as any).arcHeader?.files || [];
       
       for (const file of filesArray) {
         archiveEntries.push({
           name: file.name ? file.name.split('/').pop() || file.name : 'Unknown',
           path: file.name || '',
-          size: file.uncompressedSize || file.size || 0,
-          compressedSize: file.compressedSize || 0,
+          size: file.unpSize || file.uncompressedSize || file.size || 0,
+          compressedSize: file.packSize || file.compressedSize || 0,
           isDirectory: file.flags?.directory || file.isDirectory || false,
           date: file.time ? new Date(file.time) : new Date()
         });
       }
     }
 
+    console.log('RAR entries extracted:', archiveEntries.length);
     return archiveEntries;
   } catch (err) {
     console.error('Error loading RAR:', err);
