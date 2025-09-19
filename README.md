@@ -1,7 +1,5 @@
 > for gitops workflows, refer to [template](https://github.com/eagle-cooler/template)
 
-![](./preview.png)
-
 # Eagle Zipper Extension
 
 A comprehensive archive viewer extension for Eagle.cool that provides seamless browsing and management of compressed files without extraction.
