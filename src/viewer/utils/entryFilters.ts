@@ -13,12 +13,12 @@ export const getDisplayEntries = (entries: ArchiveEntry[], currentPath: string):
     
     if (currentPath === '') {
       // Root level - show immediate children only
-      const pathParts = normalizedEntryPath.split('/').filter(part => part !== '');
+      const pathParts = normalizedEntryPath.split('/').filter((part: string) => part !== '');
       
       if (pathParts.length === 1) {
         // Direct file or folder in root - but exclude empty entries
         if (normalizedEntryPath.trim() !== '' && entry.name.trim() !== '') {
-          const key = normalizedEntryPath.toLowerCase(); // Use lowercase for case-insensitive comparison
+          const key = entry.name.toLowerCase(); // Use name instead of path for better deduplication
           if (!seenEntries.has(key)) {
             // Update the entry with normalized path
             const normalizedEntry = { ...entry, path: normalizedEntryPath };
@@ -29,7 +29,7 @@ export const getDisplayEntries = (entries: ArchiveEntry[], currentPath: string):
         // This is a nested item, create a folder entry for its parent
         const folderName = pathParts[0];
         const folderPath = folderName;
-        const key = folderPath.toLowerCase();
+        const key = folderName.toLowerCase(); // Use folder name for deduplication
         
         // Only create folder if it has a valid name and we haven't seen it
         if (folderName.trim() !== '' && !seenEntries.has(key)) {
@@ -49,12 +49,12 @@ export const getDisplayEntries = (entries: ArchiveEntry[], currentPath: string):
       
       if (normalizedEntryPath.startsWith(normalizedCurrentPath)) {
         const relativePath = normalizedEntryPath.substring(normalizedCurrentPath.length);
-        const pathParts = relativePath.split('/').filter(part => part !== '');
+        const pathParts = relativePath.split('/').filter((part: string) => part !== '');
         
         if (pathParts.length === 1) {
           // Direct child (file or folder) - exclude empty entries
           if (relativePath.trim() !== '' && entry.name.trim() !== '') {
-            const key = normalizedEntryPath.toLowerCase();
+            const key = entry.name.toLowerCase(); // Use name for deduplication
             if (!seenEntries.has(key)) {
               // Update the entry with normalized path
               const normalizedEntry = { ...entry, path: normalizedEntryPath };
@@ -65,7 +65,7 @@ export const getDisplayEntries = (entries: ArchiveEntry[], currentPath: string):
           // Nested item, create folder entry for immediate child
           const folderName = pathParts[0];
           const folderPath = normalizedCurrentPath + folderName;
-          const key = folderPath.toLowerCase();
+          const key = folderName.toLowerCase(); // Use folder name for deduplication
           
           // Only create folder if it has a valid name and we haven't seen it
           if (folderName.trim() !== '' && !seenEntries.has(key)) {

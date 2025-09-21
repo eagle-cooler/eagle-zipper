@@ -40,21 +40,27 @@ export const loadZipArchive = async (path: string, password?: string): Promise<A
       .map((entry: any) => {
         console.log('Processing entry:', entry.entryName, 'isDirectory:', entry.isDirectory);
         
-        // Extract proper name for display
-        let displayName = entry.name;
+        // Use entryName consistently (this is the full path)
+        const fullPath = entry.entryName;
+        
+        // Extract proper name for display (just the filename/folder name)
+        let displayName = fullPath;
         if (entry.isDirectory && displayName.endsWith('/')) {
           displayName = displayName.slice(0, -1); // Remove trailing slash
         }
-        displayName = displayName.split('/').pop() || displayName;
+        
+        // Get just the last part of the path as the display name
+        const pathParts = displayName.split('/').filter((part: string) => part.trim() !== '');
+        displayName = pathParts[pathParts.length - 1] || displayName;
         
         // Additional safety check for empty names
         if (displayName.trim() === '') {
-          displayName = entry.entryName.split('/').filter((p: string) => p).pop() || 'Unknown';
+          displayName = 'Unknown';
         }
         
         return {
           name: displayName,
-          path: entry.entryName,
+          path: fullPath,
           size: entry.header.size,
           compressedSize: entry.header.compressedSize,
           isDirectory: entry.isDirectory,
