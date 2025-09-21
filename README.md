@@ -2,68 +2,92 @@
 
 # Eagle Zipper Extension
 
-A comprehensive archive viewer extension for Eagle.cool that provides seamless browsing and management of compressed files without extraction.
+**Browse and edit compressed files directly in Eagle.cool - no extraction needed!**
 
-## Features
+Ever wanted to peek inside a ZIP file or quickly edit something without the hassle of extracting, modifying, and re-compressing? Eagle Zipper lets you browse archive contents like folders and edit ZIP files with just a right-click.
 
-✅ **Multi-Format Support**: ZIP, RAR, and 7Z archives  
-✅ **Password Protection**: Secure handling of encrypted archives  
-✅ **Folder Navigation**: Hierarchical browsing with breadcrumb trails  
-✅ **Sortable Columns**: Click headers to sort by name, size, compressed size, or date  
-✅ **Eagle Integration**: Native theme sync and file system compatibility  
-✅ **Organized Architecture**: Modular codebase with format-specific implementations  
+## What You Can Do
 
-## Tech Stack
+### 🔍 **Browse Any Archive Like a Folder**
+- Open ZIP, RAR, and 7Z files directly in Eagle
+- Navigate through folders with breadcrumb trails
+- Sort files by name, size, or date
+- Handle password-protected archives seamlessly
 
+### ✏️ **Edit ZIP Files On-the-Fly**
+- Right-click any ZIP file → "Edit Archive"
+- Files automatically open in your default applications
+- Make changes and save - Eagle Zipper handles the rest
+- Original ZIP updates automatically when you're done
+
+### 🔒 **Handle Protected Archives**
+- Encrypted ZIP files? No problem - just enter the password
+- RAR archives with passwords work seamlessly
+- Secure handling ensures your passwords stay safe
+
+### 🎨 **Fits Right Into Eagle**
+- Matches your Eagle theme (dark/light mode)
+- Native Eagle integration - feels like it's built-in
+- No learning curve - works exactly how you'd expect
+
+## What's Not Supported
+
+### 🚫 **By Design** (Won't Be Added)
+- **Creating new archives** - Eagle is for managing files, not creating them
+- **Major archive restructuring** - Use dedicated archive tools for heavy modifications
+- **Advanced compression settings** - Keeps the workflow simple and focused
+
+### ⏳ **Not Yet** (Future Possibilities)  
+- **Editing RAR/7Z files** - technical limitations with these formats
+- **Batch editing multiple archives** - could be useful for power users
+
+## How It Works
+
+When you edit a ZIP file, Eagle Zipper:
+1. Extracts files to a secure temporary folder
+2. Opens them in your default applications
+3. Monitors for changes automatically
+4. Rebuilds the ZIP when you're finished
+5. Replaces the original file in Eagle
+
+Everything happens behind the scenes - you just edit and save like normal!
+
+---
+
+## For Developers
+
+### Tech Stack
 - **React 18** + **TypeScript** - Modern UI with type safety
-- **Vite** - Fast build system with HMR
+- **Vite** - Fast build system with HMR  
 - **TailwindCSS** + **DaisyUI** - Responsive styling with Eagle theme integration
-- **Archive Libraries**: adm-zip, node-unrar-js, 7zip-min
+- **Archive Libraries**: adm-zip (editing), node-unrar-js, 7zip-min
 
-## Development
+### Development
 
 **Install dependencies**
-
 ```sh
 pnpm i
-# or
-npm i
 ```
 
 **Development with watch mode**
-
 ```sh
 pnpm dev
-# or
-npm run dev
 ```
 
 **Build for production**
-
 ```sh
 pnpm build
-# or
-npm run build
 ```
 
-## Architecture
+### Architecture
+The codebase is organized into focused modules:
+- `components/` - React UI components
+- `loaders/` - Format-specific archive parsing  
+- `extractors/` - File extraction and ZIP rebuilding
+- `updater/` - Archive editing orchestration with Eagle API
+- `utils/` - File monitoring, crypto, and temp directory management
 
-```
-src/viewer/
-├── components/          # React UI components
-├── loaders/            # Format-specific archive parsing
-├── extractors/         # Format-specific file extraction
-├── utils/              # Utility functions
-└── types/              # TypeScript definitions
-```
-
-## Eagle Extension
-
-This extension integrates with Eagle.cool to provide:
-- Automatic archive detection and viewing
-- Native theme synchronization (dark/light mode)
-- Seamless file system integration
-- Password prompt handling for encrypted archives
+---
 
 ## Credits
 
