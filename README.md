@@ -39,7 +39,6 @@ Ever wanted to peek inside a ZIP file or quickly edit something without the hass
 
 ### ⏳ **Not Yet** (Future Possibilities)  
 - **Editing RAR/7Z files** - technical limitations with these formats
-- **Batch editing multiple archives** - could be useful for power users
 
 ## How It Works
 
