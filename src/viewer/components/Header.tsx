@@ -1,6 +1,6 @@
 interface HeaderProps {
   filePath: string | null;
-  archiveType: 'zip' | 'rar' | '7z' | null;
+  archiveType: 'zip' | 'rar' | '7z' | 'tar' | null;
 }
 
 export const Header: React.FC<HeaderProps> = ({ filePath, archiveType }) => {

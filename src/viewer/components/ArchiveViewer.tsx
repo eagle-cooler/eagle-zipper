@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react';
 import type { ArchiveEntry } from '../types';
 import { getArchiveType } from '../utils';
-import { loadZipArchive, loadRarArchive, load7zArchive } from '../loaders';
+import { loadZipArchive, load7zArchive, loadRarArchive, loadTarArchive } from '../loaders';
 import { getDisplayEntries } from '../utils';
 import { extractAndOpenFile } from '../extractors';
 import { PasswordPrompt } from './PasswordPrompt';
@@ -20,7 +20,7 @@ export const ArchiveViewer: React.FC = () => {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [showPasswordPrompt, setShowPasswordPrompt] = useState(false);
-  const [archiveType, setArchiveType] = useState<'zip' | 'rar' | '7z' | null>(null);
+  const [archiveType, setArchiveType] = useState<'zip' | 'rar' | '7z' | 'tar' | null>(null);
   const [currentPassword, setCurrentPassword] = useState<string | undefined>(undefined);
   const [sortField, setSortField] = useState<SortField>('name');
   const [sortDirection, setSortDirection] = useState<SortDirection>('asc');
@@ -52,6 +52,8 @@ export const ArchiveViewer: React.FC = () => {
         archiveEntries = await loadRarArchive(path, password);
       } else if (type === '7z') {
         archiveEntries = await load7zArchive(path, password);
+      } else if (type === 'tar') {
+        archiveEntries = await loadTarArchive(path, password);
       } else {
         throw new Error('Unsupported archive format');
       }

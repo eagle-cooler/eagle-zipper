@@ -6,9 +6,10 @@ export const formatFileSize = (bytes: number): string => {
   return parseFloat((bytes / Math.pow(k, i)).toFixed(2)) + ' ' + sizes[i];
 };
 
-export const getArchiveType = (path: string): 'zip' | 'rar' | '7z' | null => {
+export const getArchiveType = (path: string): 'zip' | 'rar' | '7z' | 'tar' | null => {
   const ext = path.toLowerCase().split('.').pop();
-  if (ext === 'zip' || ext === 'tar') return 'zip';
+  if (ext === 'zip') return 'zip';
+  if (ext === 'tar') return 'tar'; // TAR files get their own handler
   if (ext === '7z') return '7z';
   if (ext === 'rar') return 'rar';
   return null;

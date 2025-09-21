@@ -2,11 +2,12 @@ import type { ArchiveEntry } from '../types';
 import { extractZipFile } from './zipExtractor';
 import { extract7zFile } from './sevenZipExtractor';
 import { extractRarFile } from './rarExtractor';
+import { extractTarFile } from './tarExtractor';
 
 export const extractAndOpenFile = async (
   archivePath: string,
   entry: ArchiveEntry,
-  archiveType: 'zip' | 'rar' | '7z',
+  archiveType: 'zip' | 'rar' | '7z' | 'tar',
   password?: string
 ): Promise<void> => {
   try {
@@ -21,6 +22,10 @@ export const extractAndOpenFile = async (
         break;
       case 'rar':
         extractedPath = await extractRarFile(archivePath, entry, password);
+        break;
+
+      case 'tar':
+        extractedPath = await extractTarFile(archivePath, entry, password);
         break;
       default:
         throw new Error(`Unsupported archive type: ${archiveType}`);
