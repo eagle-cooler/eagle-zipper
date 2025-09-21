@@ -1,10 +1,12 @@
 import { useState, useEffect } from 'react';
 import type { ArchiveEntry } from '../types';
+import type { EditingSession } from '../updater';
 import { getArchiveType } from '../utils';
 import { loadZipArchive, load7zArchive, loadRarArchive, loadTarArchive } from '../loaders';
 import { getDisplayEntries } from '../utils';
 import { extractAndOpenFile } from '../extractors';
 import { PasswordPrompt } from './PasswordPrompt';
+import { EditingModal } from './EditingModal';
 import { Header } from './Header';
 import { Breadcrumb } from './Breadcrumb';
 import { FileTable } from './FileTable';
@@ -14,6 +16,7 @@ type SortField = 'name' | 'size' | 'compressedSize' | 'date';
 type SortDirection = 'asc' | 'desc';
 
 export const ArchiveViewer: React.FC = () => {
+  const [itemId, setItemId] = useState<string | null>(null);
   const [filePath, setFilePath] = useState<string | null>(null);
   const [entries, setEntries] = useState<ArchiveEntry[]>([]);
   const [currentPath, setCurrentPath] = useState<string>('');
@@ -24,10 +27,15 @@ export const ArchiveViewer: React.FC = () => {
   const [currentPassword, setCurrentPassword] = useState<string | undefined>(undefined);
   const [sortField, setSortField] = useState<SortField>('name');
   const [sortDirection, setSortDirection] = useState<SortDirection>('asc');
+  const [editingSession, setEditingSession] = useState<EditingSession | null>(null);
+  const [currentUpdater, setCurrentUpdater] = useState<any>(null);
 
   useEffect(() => {
     const urlParams = new URLSearchParams(window.location.search);
+    //console.log('URL Params:', urlParams.toString());
+    const id = urlParams.get("id");
     const path = urlParams.get("path");
+    setItemId(id);
     setFilePath(path);
   }, []);
 
@@ -129,6 +137,36 @@ export const ArchiveViewer: React.FC = () => {
     }
   };
 
+  const handleEditingUpdate = async () => {
+    if (currentUpdater) {
+      try {
+        await currentUpdater.updateArchive();
+        setEditingSession(null);
+        setCurrentUpdater(null);
+      } catch (error) {
+        console.error('Failed to update archive:', error);
+      }
+    }
+  };
+
+  const handleEditingCancel = async () => {
+    if (currentUpdater) {
+      try {
+        await currentUpdater.cancelEditing();
+        setEditingSession(null);
+        setCurrentUpdater(null);
+      } catch (error) {
+        console.error('Failed to cancel editing session:', error);
+      }
+    }
+  };
+
+  const handleOpenDirectory = () => {
+    if (editingSession && eagle && eagle.shell) {
+      eagle.shell.openPath(editingSession.tempDirectory);
+    }
+  };
+
   const sortEntries = (entries: ArchiveEntry[]): ArchiveEntry[] => {
     const sortedEntries = [...entries].sort((a, b) => {
       // Always keep directories at the top
@@ -193,6 +231,16 @@ export const ArchiveViewer: React.FC = () => {
         onCancel={handlePasswordCancel}
       />
       
+      <EditingModal
+        isOpen={editingSession !== null}
+        archiveName={filePath ? filePath.split(/[\\/]/).pop() || 'Archive' : 'Archive'}
+        tempDirectory={editingSession?.tempDirectory || ''}
+        changedFiles={editingSession?.changedFiles || []}
+        onUpdate={handleEditingUpdate}
+        onCancel={handleEditingCancel}
+        onOpenDirectory={handleOpenDirectory}
+      />
+      
       <Header filePath={filePath} archiveType={archiveType} />
       
       <Breadcrumb 
@@ -206,9 +254,14 @@ export const ArchiveViewer: React.FC = () => {
         currentPath={currentPath}
         archivePath={filePath || ''}
         archiveType={archiveType}
+        itemId={itemId}
         onNavigateToFolder={navigateToFolder}
         onNavigateUp={navigateUp}
         onFileDoubleClick={handleFileDoubleClick}
+        onEditingSessionStart={(session, updater) => {
+          setEditingSession(session);
+          setCurrentUpdater(updater);
+        }}
         sortField={sortField}
         sortDirection={sortDirection}
         onSort={handleSort}

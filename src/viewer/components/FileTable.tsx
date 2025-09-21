@@ -10,9 +10,11 @@ interface FileTableProps {
   currentPath: string;
   archivePath: string;
   archiveType: 'zip' | 'rar' | '7z' | 'tar' | null;
+  itemId: string | null;
   onNavigateToFolder: (folderPath: string) => void;
   onNavigateUp: () => void;
   onFileDoubleClick?: (entry: ArchiveEntry) => void;
+  onEditingSessionStart?: (session: any, updater: any) => void;
   sortField: SortField;
   sortDirection: SortDirection;
   onSort: (field: SortField) => void;
@@ -23,9 +25,11 @@ export const FileTable: React.FC<FileTableProps> = ({
   currentPath,
   archivePath,
   archiveType,
+  itemId,
   onNavigateToFolder, 
   onNavigateUp,
   onFileDoubleClick,
+  onEditingSessionStart,
   sortField,
   sortDirection,
   onSort
@@ -67,7 +71,15 @@ export const FileTable: React.FC<FileTableProps> = ({
   const handleEditFile = async (entry: ArchiveEntry) => {
     try {
       if (archiveType && archivePath) {
-        const updater = createArchiveUpdater(archivePath, archiveType);
+        const updater = createArchiveUpdater(archivePath, archiveType, itemId);
+        
+        // Set up session callback
+        updater.setSessionUpdateCallback((session) => {
+          if (onEditingSessionStart) {
+            onEditingSessionStart(session, updater);
+          }
+        });
+        
         await updater.editFile(entry);
       }
     } catch (error) {
