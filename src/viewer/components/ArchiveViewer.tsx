@@ -204,6 +204,8 @@ export const ArchiveViewer: React.FC = () => {
       <FileTable
         entries={displayEntries}
         currentPath={currentPath}
+        archivePath={filePath || ''}
+        archiveType={archiveType}
         onNavigateToFolder={navigateToFolder}
         onNavigateUp={navigateUp}
         onFileDoubleClick={handleFileDoubleClick}

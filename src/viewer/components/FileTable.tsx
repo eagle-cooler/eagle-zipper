@@ -1,5 +1,6 @@
 import type { ArchiveEntry } from '../types';
 import { formatFileSize } from '../utils';
+import { createArchiveUpdater, supportsEditing } from '../updater';
 
 type SortField = 'name' | 'size' | 'compressedSize' | 'date';
 type SortDirection = 'asc' | 'desc';
@@ -7,6 +8,8 @@ type SortDirection = 'asc' | 'desc';
 interface FileTableProps {
   entries: ArchiveEntry[];
   currentPath: string;
+  archivePath: string;
+  archiveType: 'zip' | 'rar' | '7z' | 'tar' | null;
   onNavigateToFolder: (folderPath: string) => void;
   onNavigateUp: () => void;
   onFileDoubleClick?: (entry: ArchiveEntry) => void;
@@ -17,7 +20,9 @@ interface FileTableProps {
 
 export const FileTable: React.FC<FileTableProps> = ({ 
   entries, 
-  currentPath, 
+  currentPath,
+  archivePath,
+  archiveType,
   onNavigateToFolder, 
   onNavigateUp,
   onFileDoubleClick,
@@ -34,6 +39,47 @@ export const FileTable: React.FC<FileTableProps> = ({
   const handleRowDoubleClick = (entry: ArchiveEntry) => {
     if (!entry.isDirectory && onFileDoubleClick) {
       onFileDoubleClick(entry);
+    }
+  };
+
+  const handleRowRightClick = (entry: ArchiveEntry, event: React.MouseEvent) => {
+    event.preventDefault();
+    
+    // Only show context menu for files (not directories) and only for supported archive types
+    if (!entry.isDirectory && supportsEditing(archiveType)) {
+      const menuItems = [
+        {
+          id: 'edit-file',
+          label: 'Edit File',
+          click: () => {
+            handleEditFile(entry);
+          }
+        }
+      ];
+      
+      // Open Eagle context menu
+      if (eagle && eagle.contextMenu) {
+        eagle.contextMenu.open(menuItems);
+      }
+    }
+  };
+
+  const handleEditFile = async (entry: ArchiveEntry) => {
+    try {
+      if (archiveType && archivePath) {
+        const updater = createArchiveUpdater(archivePath, archiveType);
+        await updater.editFile(entry);
+      }
+    } catch (error) {
+      console.error('Error editing file:', error);
+      
+      if (eagle && eagle.notification) {
+        eagle.notification.show({
+          title: 'Edit Error',
+          description: error instanceof Error ? error.message : 'Failed to edit file',
+          duration: 3000
+        });
+      }
     }
   };
 
@@ -89,6 +135,7 @@ export const FileTable: React.FC<FileTableProps> = ({
                 className="hover:bg-base-200 cursor-pointer"
                 onClick={() => handleRowClick(entry)}
                 onDoubleClick={() => handleRowDoubleClick(entry)}
+                onContextMenu={(e) => handleRowRightClick(entry, e)}
               >
                 <td>
                   <div className="flex items-center gap-2">
