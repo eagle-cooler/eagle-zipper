@@ -1,1 +1,77 @@
-{}
+{
+    "manifest": {
+		"app": {
+			"name": "Zipper"
+		}
+    },
+    "app": {
+        "ui": {
+            "editing": {
+                "title": "Editing: {{archiveName}}",
+                "filesModified": "{{count}} file(s) modified",
+                "openDirectory": "Open Directory",
+                "finishEditing": "Finish Editing",
+                "openDirectoryTooltip": "Open extracted files directory",
+                "finishEditingTooltip": "Finish editing and update archive"
+            },
+            "table": {
+                "name": "Name",
+                "size": "Size",
+                "compressed": "Compressed",
+                "date": "Date"
+            },
+            "password": {
+                "title": "Archive is Password Protected",
+                "enterPassword": "Enter Password:",
+                "placeholder": "Password",
+                "cancel": "Cancel",
+                "open": "Open"
+            },
+            "contextMenu": {
+                "editFile": "Edit File"
+            },
+            "footer": {
+                "items": "items",
+                "itemsIn": "{{count}} items in {{path}}"
+            }
+        },
+        "notifications": {
+            "editUnavailable": {
+                "title": "Edit Feature Unavailable",
+                "description": "Edit functionality is only supported for ZIP archives."
+            },
+            "fileOpenedExisting": {
+                "title": "File Opened from Existing Session",
+                "description": "\"{{fileName}}\" opened from active editing session."
+            },
+            "fileOpened": {
+                "title": "File Opened for Editing",
+                "description": "\"{{fileName}}\" has been extracted and opened. Save your changes and click \"Finish Editing\" when done."
+            },
+            "archiveExtracted": {
+                "title": "Archive Extracted",
+                "description": "Archive extracted but file \"{{fileName}}\" not found. Directory opened instead."
+            },
+            "editError": {
+                "title": "Edit Error",
+                "description": "Failed to edit file"
+            },
+            "extractionError": {
+                "title": "Extraction Error",
+                "description": "Failed to start editing session: {{error}}"
+            },
+            "updateSuccess": {
+                "title": "Archive Updated",
+                "description": "Archive has been successfully updated with your changes."
+            },
+            "updateError": {
+                "title": "Update Error",
+                "description": "Failed to update archive: {{error}}"
+            },
+            "editingCancelled": {
+                "title": "Editing Cancelled",
+                "description": "Editing session cancelled and temporary files cleaned up."
+            }
+        }
+    }
+}

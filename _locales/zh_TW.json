@@ -1,0 +1,77 @@
+{
+	"manifest": {
+		"app": {
+			"name": "Zipper"
+		}
+    },
+	"app": {
+		"ui": {
+			"editing": {
+				"title": "正在編輯: {{archiveName}}",
+				"filesModified": "{{count}}個檔案已修改",
+				"openDirectory": "開啟目錄",
+				"finishEditing": "完成編輯",
+				"openDirectoryTooltip": "開啟解壓檔案目錄",
+				"finishEditingTooltip": "完成編輯並更新封存檔"
+			},
+			"table": {
+				"name": "名稱",
+				"size": "大小",
+				"compressed": "壓縮後",
+				"date": "日期"
+			},
+			"password": {
+				"title": "封存檔受密碼保護",
+				"enterPassword": "輸入密碼:",
+				"placeholder": "密碼",
+				"cancel": "取消",
+				"open": "開啟"
+			},
+			"contextMenu": {
+				"editFile": "編輯檔案"
+			},
+			"footer": {
+				"items": "個項目",
+				"itemsIn": "{{path}} 中的 {{count}} 個項目"
+			}
+		},
+		"notifications": {
+			"editUnavailable": {
+				"title": "編輯功能不可用",
+				"description": "編輯功能僅支援ZIP封存檔。"
+			},
+			"fileOpenedExisting": {
+				"title": "從現有工作階段開啟檔案",
+				"description": "從活動編輯工作階段中開啟了\"{{fileName}}\"。"
+			},
+			"fileOpened": {
+				"title": "檔案已開啟編輯",
+				"description": "\"{{fileName}}\"已解壓並開啟。儲存變更後，完成時點擊\"完成編輯\"。"
+			},
+			"archiveExtracted": {
+				"title": "封存檔已解壓",
+				"description": "封存檔已解壓，但未找到檔案\"{{fileName}}\"。改為開啟了目錄。"
+			},
+			"editError": {
+				"title": "編輯錯誤",
+				"description": "編輯檔案失敗"
+			},
+			"extractionError": {
+				"title": "解壓錯誤",
+				"description": "啟動編輯工作階段失敗: {{error}}"
+			},
+			"updateSuccess": {
+				"title": "封存檔已更新",
+				"description": "封存檔已成功更新您的變更。"
+			},
+			"updateError": {
+				"title": "更新錯誤",
+				"description": "更新封存檔失敗: {{error}}"
+			},
+			"editingCancelled": {
+				"title": "編輯已取消",
+				"description": "編輯工作階段已取消，暫存檔案已清理。"
+			}
+		}
+	}
+}

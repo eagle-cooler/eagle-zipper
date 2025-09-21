@@ -1,0 +1,77 @@
+{
+	"manifest": {
+		"app": {
+			"name": "Zipper"
+		}
+    },
+	"app": {
+		"ui": {
+			"editing": {
+				"title": "編集中: {{archiveName}}",
+				"filesModified": "{{count}}個のファイルが変更されました",
+				"openDirectory": "ディレクトリを開く",
+				"finishEditing": "編集を完了",
+				"openDirectoryTooltip": "抽出されたファイルのディレクトリを開く",
+				"finishEditingTooltip": "編集を完了してアーカイブを更新"
+			},
+			"table": {
+				"name": "名前",
+				"size": "サイズ",
+				"compressed": "圧縮サイズ",
+				"date": "日付"
+			},
+			"password": {
+				"title": "アーカイブはパスワードで保護されています",
+				"enterPassword": "パスワードを入力:",
+				"placeholder": "パスワード",
+				"cancel": "キャンセル",
+				"open": "開く"
+			},
+			"contextMenu": {
+				"editFile": "ファイルを編集"
+			},
+			"footer": {
+				"items": "アイテャム",
+				"itemsIn": "{{path}} 内の {{count}} アイテャム"
+			}
+		},
+		"notifications": {
+			"editUnavailable": {
+				"title": "編集機能が利用できません",
+				"description": "編集機能はZIPアーカイブのみサポートされています。"
+			},
+			"fileOpenedExisting": {
+				"title": "既存のセッションからファイルを開きました",
+				"description": "\"{{fileName}}\"をアクティブな編集セッションから開きました。"
+			},
+			"fileOpened": {
+				"title": "ファイルを編集用に開きました",
+				"description": "\"{{fileName}}\"が抽出され、開かれました。変更を保存して、完了したら\"編集を完了\"をクリックしてください。"
+			},
+			"archiveExtracted": {
+				"title": "アーカイブが抽出されました",
+				"description": "アーカイブは抽出されましたが、ファイル\"{{fileName}}\"が見つかりませんでした。代わりにディレクトリを開きました。"
+			},
+			"editError": {
+				"title": "編集エラー",
+				"description": "ファイルの編集に失敗しました"
+			},
+			"extractionError": {
+				"title": "抽出エラー",
+				"description": "編集セッションの開始に失敗しました: {{error}}"
+			},
+			"updateSuccess": {
+				"title": "アーカイブが更新されました",
+				"description": "アーカイブが変更内容で正常に更新されました。"
+			},
+			"updateError": {
+				"title": "更新エラー",
+				"description": "アーカイブの更新に失敗しました: {{error}}"
+			},
+			"editingCancelled": {
+				"title": "編集がキャンセルされました",
+				"description": "編集セッションがキャンセルされ、一時ファイルがクリーンアップされました。"
+			}
+		}
+	}
+}

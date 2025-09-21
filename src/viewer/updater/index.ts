@@ -5,6 +5,7 @@ import type { ArchiveEntry } from '../types';
 import { extractZipToTemp, createZipFromTemp } from '../extractors/zipExtraction';
 import { FileWatcher, type FileWatcherEvents } from '../utils/fileWatcher';
 import { cleanupTempDirectory } from '../utils/tempDir';
+import { t } from '../utils/i18n';
 
 export interface UpdateOperation {
   type: 'edit' | 'add' | 'remove';
@@ -54,8 +55,8 @@ export class ArchiveUpdater {
     if (this.archiveType !== 'zip') {
       if (eagle && eagle.notification) {
         eagle.notification.show({
-          title: 'Edit Feature Unavailable',
-          description: 'Edit functionality is only supported for ZIP archives.',
+          title: t('app.notifications.editUnavailable.title'),
+          description: t('app.notifications.editUnavailable.description'),
           duration: 3000
         });
       }
@@ -82,8 +83,8 @@ export class ArchiveUpdater {
         
         if (eagle.notification) {
           eagle.notification.show({
-            title: 'File Opened from Existing Session',
-            description: `"${entry.path}" opened from active editing session.`,
+            title: t('app.notifications.fileOpenedExisting.title'),
+            description: t('app.notifications.fileOpenedExisting.description', { fileName: entry.path }),
             duration: 3000
           });
         }
@@ -173,14 +174,14 @@ export class ArchiveUpdater {
       if (eagle && eagle.notification) {
         if (fileExists) {
           eagle.notification.show({
-            title: 'File Opened for Editing',
-            description: `"${entry.path}" has been extracted and opened. Save your changes and click "Finish Editing" when done.`,
+            title: t('app.notifications.fileOpened.title'),
+            description: t('app.notifications.fileOpened.description', { fileName: entry.path }),
             duration: 4000
           });
         } else {
           eagle.notification.show({
-            title: 'Archive Extracted',
-            description: `Archive extracted but file "${entry.path}" not found. Directory opened instead.`,
+            title: t('app.notifications.archiveExtracted.title'),
+            description: t('app.notifications.archiveExtracted.description', { fileName: entry.path }),
             duration: 4000
           });
         }
@@ -195,8 +196,8 @@ export class ArchiveUpdater {
       console.error('Failed to start editing session:', error);
       if (eagle && eagle.notification) {
         eagle.notification.show({
-          title: 'Extraction Failed',
-          description: `Failed to extract archive: ${error instanceof Error ? error.message : 'Unknown error'}`,
+          title: t('app.notifications.extractionError.title'),
+          description: t('app.notifications.extractionError.description', { error: error instanceof Error ? error.message : 'Unknown error' }),
           duration: 5000
         });
       }
@@ -230,8 +231,8 @@ export class ArchiveUpdater {
         // Notify success
         if (eagle.notification) {
           eagle.notification.show({
-            title: 'Archive Updated',
-            description: 'Successfully updated the archive with your changes.',
+            title: t('app.notifications.updateSuccess.title'),
+            description: t('app.notifications.updateSuccess.description'),
             duration: 3000
           });
         }
@@ -258,8 +259,8 @@ export class ArchiveUpdater {
       console.error('Failed to update archive:', error);
       if (eagle && eagle.notification) {
         eagle.notification.show({
-          title: 'Update Failed',
-          description: `Failed to update archive: ${error instanceof Error ? error.message : 'Unknown error'}`,
+          title: t('app.notifications.updateError.title'),
+          description: t('app.notifications.updateError.description', { error: error instanceof Error ? error.message : 'Unknown error' }),
           duration: 5000
         });
       }
@@ -275,8 +276,8 @@ export class ArchiveUpdater {
     
     if (eagle && eagle.notification) {
       eagle.notification.show({
-        title: 'Editing Cancelled',
-        description: 'Editing session cancelled and temporary files cleaned up.',
+        title: t('app.notifications.editingCancelled.title'),
+        description: t('app.notifications.editingCancelled.description'),
         duration: 2000
       });
     }

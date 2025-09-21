@@ -1,5 +1,7 @@
 // Modal component for archive editing interface
 
+import { t } from '../utils/i18n';
+
 interface EditingModalProps {
   isOpen: boolean;
   archiveName: string;
@@ -29,13 +31,13 @@ export const EditingModal: React.FC<EditingModalProps> = ({
           <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path>
         </svg>
         <div>
-          <h3 className="font-bold">Editing: {archiveName}</h3>
+          <h3 className="font-bold">{t('app.ui.editing.title', { archiveName })}</h3>
           <div className="text-sm opacity-75 font-mono break-all">
             {tempDirectory}
           </div>
           {changedFiles.length > 0 && (
             <div className="text-sm text-warning mt-1">
-              📝 {changedFiles.length} file(s) modified
+              📝 {t('app.ui.editing.filesModified', { count: changedFiles.length })}
             </div>
           )}
         </div>
@@ -44,16 +46,16 @@ export const EditingModal: React.FC<EditingModalProps> = ({
         <button 
           className="btn btn-sm btn-ghost mr-2"
           onClick={onOpenDirectory}
-          title="Open extracted files directory"
+          title={t('app.ui.editing.openDirectoryTooltip')}
         >
-          📁 Open Directory
+          📁 {t('app.ui.editing.openDirectory')}
         </button>
         <button 
           className="btn btn-sm btn-success"
           onClick={onUpdate}
-          title="Finish editing and update archive"
+          title={t('app.ui.editing.finishEditingTooltip')}
         >
-          ✅ Finish Editing
+          ✅ {t('app.ui.editing.finishEditing')}
         </button>
       </div>
     </div>

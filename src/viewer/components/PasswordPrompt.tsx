@@ -1,4 +1,5 @@
 import { useState } from 'react';
+import { t } from '../utils/i18n';
 
 interface PasswordPromptProps {
   isOpen: boolean;
@@ -20,27 +21,27 @@ export const PasswordPrompt: React.FC<PasswordPromptProps> = ({ isOpen, onSubmit
   return (
     <div className="modal modal-open">
       <div className="modal-box">
-        <h3 className="font-bold text-lg">Archive is Password Protected</h3>
+        <h3 className="font-bold text-lg">{t('app.ui.password.title')}</h3>
         <form onSubmit={handleSubmit} className="py-4">
           <div className="form-control">
             <label className="label">
-              <span className="label-text">Enter Password:</span>
+              <span className="label-text">{t('app.ui.password.enterPassword')}</span>
             </label>
             <input
               type="password"
               value={password}
               onChange={(e) => setPassword(e.target.value)}
               className="input input-bordered w-full"
-              placeholder="Password"
+              placeholder={t('app.ui.password.placeholder')}
               autoFocus
             />
           </div>
           <div className="modal-action">
             <button type="button" className="btn" onClick={onCancel}>
-              Cancel
+              {t('app.ui.password.cancel')}
             </button>
             <button type="submit" className="btn btn-primary">
-              Open
+              {t('app.ui.password.open')}
             </button>
           </div>
         </form>

@@ -1,6 +1,7 @@
 import type { ArchiveEntry } from '../types';
 import { formatFileSize } from '../utils';
 import { createArchiveUpdater, supportsEditing } from '../updater';
+import { t } from '../utils/i18n';
 
 type SortField = 'name' | 'size' | 'compressedSize' | 'date';
 type SortDirection = 'asc' | 'desc';
@@ -54,7 +55,7 @@ export const FileTable: React.FC<FileTableProps> = ({
       const menuItems = [
         {
           id: 'edit-file',
-          label: 'Edit File',
+          label: t('app.ui.contextMenu.editFile'),
           click: () => {
             handleEditFile(entry);
           }
@@ -87,8 +88,8 @@ export const FileTable: React.FC<FileTableProps> = ({
       
       if (eagle && eagle.notification) {
         eagle.notification.show({
-          title: 'Edit Error',
-          description: error instanceof Error ? error.message : 'Failed to edit file',
+          title: t('app.notifications.editError.title'),
+          description: error instanceof Error ? error.message : t('app.notifications.editError.description'),
           duration: 3000
         });
       }
@@ -120,10 +121,10 @@ export const FileTable: React.FC<FileTableProps> = ({
         <table className="table table-zebra w-full">
           <thead>
             <tr>
-              <SortableHeader field="name">Name</SortableHeader>
-              <SortableHeader field="size">Size</SortableHeader>
-              <SortableHeader field="compressedSize">Compressed</SortableHeader>
-              <SortableHeader field="date">Date</SortableHeader>
+              <SortableHeader field="name">{t('app.ui.table.name')}</SortableHeader>
+              <SortableHeader field="size">{t('app.ui.table.size')}</SortableHeader>
+              <SortableHeader field="compressedSize">{t('app.ui.table.compressed')}</SortableHeader>
+              <SortableHeader field="date">{t('app.ui.table.date')}</SortableHeader>
             </tr>
           </thead>
           <tbody>

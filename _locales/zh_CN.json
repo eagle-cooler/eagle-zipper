@@ -1,0 +1,77 @@
+{
+	"manifest": {
+		"app": {
+			"name": "Zipper"
+		}
+    },
+	"app": {
+		"ui": {
+			"editing": {
+				"title": "正在编辑: {{archiveName}}",
+				"filesModified": "{{count}}个文件已修改",
+				"openDirectory": "打开目录",
+				"finishEditing": "完成编辑",
+				"openDirectoryTooltip": "打开解压文件目录",
+				"finishEditingTooltip": "完成编辑并更新存档"
+			},
+			"table": {
+				"name": "名称",
+				"size": "大小",
+				"compressed": "压缩后",
+				"date": "日期"
+			},
+			"password": {
+				"title": "存档受密码保护",
+				"enterPassword": "输入密码:",
+				"placeholder": "密码",
+				"cancel": "取消",
+				"open": "打开"
+			},
+			"contextMenu": {
+				"editFile": "编辑文件"
+			},
+			"footer": {
+				"items": "个项目",
+				"itemsIn": "{{path}} 中的 {{count}} 个项目"
+			}
+		},
+		"notifications": {
+			"editUnavailable": {
+				"title": "编辑功能不可用",
+				"description": "编辑功能仅支持ZIP存档。"
+			},
+			"fileOpenedExisting": {
+				"title": "从现有会话打开文件",
+				"description": "从活动编辑会话中打开了\"{{fileName}}\"。"
+			},
+			"fileOpened": {
+				"title": "文件已打开编辑",
+				"description": "\"{{fileName}}\"已解压并打开。保存更改后，完成时点击\"完成编辑\"。"
+			},
+			"archiveExtracted": {
+				"title": "存档已解压",
+				"description": "存档已解压，但未找到文件\"{{fileName}}\"。改为打开了目录。"
+			},
+			"editError": {
+				"title": "编辑错误",
+				"description": "编辑文件失败"
+			},
+			"extractionError": {
+				"title": "解压错误",
+				"description": "启动编辑会话失败: {{error}}"
+			},
+			"updateSuccess": {
+				"title": "存档已更新",
+				"description": "存档已成功更新您的更改。"
+			},
+			"updateError": {
+				"title": "更新错误",
+				"description": "更新存档失败: {{error}}"
+			},
+			"editingCancelled": {
+				"title": "编辑已取消",
+				"description": "编辑会话已取消，临时文件已清理。"
+			}
+		}
+	}
+}
